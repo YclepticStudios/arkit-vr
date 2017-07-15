@@ -7,11 +7,13 @@
 //
 
 using UnityEngine;
+using UnityEngine.VR;
 using UnityEngine.XR.iOS;
 
 [RequireComponent(typeof(Camera))]
 public class ArVrCamera : MonoBehaviour
 {
+	private Camera _camera = null;
 	private UnityARSessionNativeInterface _session = null;
 	private UnityARAnchorManager _anchorManager = null;
 	private Vector3 _initialPosition = Vector3.zero;
@@ -19,11 +21,11 @@ public class ArVrCamera : MonoBehaviour
 
 
 	/// <summary>
-	/// Start is called on the frame when a script is enabled just before
-	/// any of the Update methods is called the first time.
+	/// Awake is called when the script instance is being loaded.
 	/// </summary>
-	void Start()
+	void Awake()
 	{
+		_camera = GetComponent<Camera>();
 		// Store initial values
 		_initialPosition = transform.localPosition;
 		_initialRotation = transform.localRotation;
@@ -39,6 +41,8 @@ public class ArVrCamera : MonoBehaviour
 		_session.RunWithConfig(config);
 		// Start anchor manager
 		_anchorManager = new UnityARAnchorManager();
+		// Disable native VR tracking
+		VRDevice.DisableAutoVRCameraTracking(_camera, true);
 	}
 
 	/// <summary>
