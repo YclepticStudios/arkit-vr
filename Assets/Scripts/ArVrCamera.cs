@@ -13,11 +13,17 @@ using UnityEngine.XR.iOS;
 [RequireComponent(typeof(Camera))]
 public class ArVrCamera : MonoBehaviour
 {
+	// Inspector properties
+	[SerializeField]
+	private bool _useHybridTracking = true;
+	// Other properties
+	private const float HYBRID_TRACKING_GAIN = 0.001f;
 	private Camera _camera = null;
 	private UnityARSessionNativeInterface _session = null;
 	private UnityARAnchorManager _anchorManager = null;
 	private Vector3 _initialPosition = Vector3.zero;
 	private Quaternion _initialRotation = Quaternion.identity;
+	private Quaternion _offsetRotation = Quaternion.identity;
 
 
 	/// <summary>
@@ -57,7 +63,18 @@ public class ArVrCamera : MonoBehaviour
 		// Calculate camera positioning
 		Matrix4x4 matrix = _session.GetCameraPose();
 		transform.localPosition = _initialPosition - planeOffset + UnityARMatrixOps.GetPosition(matrix);
-		transform.localRotation = _initialRotation * UnityARMatrixOps.GetRotation(matrix);
+		// Calculate camera rotation
+		Quaternion arKitRot = UnityARMatrixOps.GetRotation(matrix);
+		if (_useHybridTracking)
+		{
+			Quaternion vrRot = InputTracking.GetLocalRotation(VRNode.Head);
+			transform.localRotation = _initialRotation * _offsetRotation * vrRot;
+			_offsetRotation = Quaternion.Slerp(_offsetRotation, arKitRot * Quaternion.Inverse(vrRot), HYBRID_TRACKING_GAIN);
+		}
+		else
+		{
+			transform.localRotation = _initialRotation * arKitRot;
+		}
 	}
 
 	/// <summary>

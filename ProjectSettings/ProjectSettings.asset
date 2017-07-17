@@ -9,7 +9,7 @@ PlayerSettings:
   defaultScreenOrientation: 4
   targetDevice: 2
   useOnDemandResources: 0
-  accelerometerFrequency: 60
+  accelerometerFrequency: 100
   companyName: Ycleptic Studios
   productName: ARKit VR
   defaultCursor: {fileID: 0}
@@ -343,7 +343,7 @@ PlayerSettings:
   enableInternalProfiler: 0
   logObjCUncaughtExceptions: 1
   enableCrashReportAPI: 0
-  cameraUsageDescription: AR
+  cameraUsageDescription: AR Tracking
   locationUsageDescription: 
   microphoneUsageDescription: 
   switchNetLibKey: 
